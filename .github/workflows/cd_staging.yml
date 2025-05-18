@@ -1,0 +1,37 @@
+name: CD Staging
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  redeploy:
+    name: Redeploy to Staging EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key and connect to EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          EC2_HOST: ec2-65-0-134-177.ap-south-1.compute.amazonaws.com
+          EC2_USER: ubuntu
+
+        run: |
+          echo "$SSH_PRIVATE_KEY" &> ~/ssh_key
+          chmod 600 ~/ssh_key
+          ssh -i ~/ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST '
+            echo "Successfully connected to EC2 instance!"
+            cd monodep/
+            git pull origin main
+            pnpm install
+            pnpm run build
+            /home/ubuntu/.nvm/versions/node/v23.11.1/bin/pm2 restart fe-server
+            /home/ubuntu/.nvm/versions/node/v23.11.1/bin/pm2 restart http-server
+            /home/ubuntu/.nvm/versions/node/v23.11.1/bin/pm2 restart ws-server
+            echo "Deployment commands finished."
+          '
+          rm -f ~/.ssh/id_rsa_ec2
