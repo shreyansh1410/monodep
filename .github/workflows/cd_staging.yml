@@ -26,7 +26,7 @@ jobs:
           ssh -i ~/ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST '
             echo "Successfully connected to EC2 instance!"
             cd monodep/
-            git pull
+            git pull origin main
             pnpm install
             pnpm run build
             /home/ubuntu/.nvm/versions/node/v23.11.1/bin/pm2 restart fe-server
