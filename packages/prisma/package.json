@@ -6,7 +6,6 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "type": "module",
   "exports": {
     "./client": "./src/index.ts"
   },
