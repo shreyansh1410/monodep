@@ -1,0 +1,14 @@
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build and deploy
+        run: |
+          npm run build
