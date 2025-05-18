@@ -21,10 +21,9 @@ jobs:
           EC2_USER: ubuntu
 
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/id_rsa_ec2
-          chmod 600 ~/.ssh/id_rsa_ec2
-          ssh -i ~/.ssh/id_rsa_ec2 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST '
+          echo "$SSH_PRIVATE_KEY" &> ~/ssh_key
+          chmod 600 ~/ssh_key
+          ssh -i ~/ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST '
             echo "Successfully connected to EC2 instance!"
             # --- START: Deployment Commands ---
             cd monodep/
